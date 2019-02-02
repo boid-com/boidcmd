@@ -1,0 +1,37 @@
+{
+  "name": "boid-cli",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "engines": {
+    "node": ">=11.4"
+  },
+  "keywords": [
+    "boid",
+    "eos",
+    "boinc"
+  ],
+  "preferGlobal": true,
+  "bin": {
+    "boidcmd": "bin/boidcmd"
+  },
+  "dependencies": {
+    "chalk": "^2.4.1",
+    "data-store": "^3.1.0",
+    "graphql-request": "^1.8.2",
+    "jetty": "^0.2.1",
+    "minimist": "^1.2.0",
+    "multi-progress": "^2.0.0",
+    "node-cmd": "^3.0.0",
+    "ora": "^3.0.0",
+    "os-utils": "0.0.14",
+    "progress": "^2.0.3",
+    "xml-js": "^1.6.8"
+  }
+}
