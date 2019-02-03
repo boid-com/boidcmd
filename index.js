@@ -5,7 +5,7 @@ var client = require("./api.js");
 const minimist = require('minimist')
 const ora = require('ora')
 const spinner = ora()
-var readline = require('readline');
+const readline = require('readline');
 const { spawn } = require('child_process');
 var form = {
     email: '',
@@ -74,29 +74,45 @@ var rl = readline.createInterface({
   output: process.stdout
 });
 
-function setupBoid(){
-    rl.question('Email: ', function(email) {
-        console.log("")
-        email = email
-        rl.question('Password: ', function(password) {
-            form.email = email
+async function setupBoid(){
+    var form = {}
+    rl.question('Boid Account Email:', (email) => {
+        form.email = email
+        rl.question('Boid Account Password: ', (password) => {
             form.password = password
-            client.send(form,client.endPoint.authenticateUser,function(obj){
-                client.setUserData(obj)
+            client.send(form,client.endPoint.authenticateUser,function(response){
+                response = JSON.parse(response)
+                if (response.invalid){
+                    console.log(response.invalid)
+                    setupBoid()
+                }
+                client.setUserData(response)
+                rl.close()
                 setupBoinc()
             })
-            rl.close();
-          });
-          rl.stdoutMuted = true;
-          rl.history = rl.history.slice(1);
-    });
+        })
+    })
     
-    rl._writeToOutput = function _writeToOutput(stringToWrite) {
-      if (rl.stdoutMuted)
-        rl.output.write("*");
-      else
-        rl.output.write(stringToWrite);
-    };
+    // rl.question('Email: ', function(email) {
+    //     rl.question('Password: ', function(password) {
+    //         form.email = email
+    //         form.password = password
+    //         client.send(form,client.endPoint.authenticateUser,function(obj){
+    //             // client.setUserData(obj)
+    //             setupBoinc()
+    //         })
+    //         rl.close();
+    //       });
+    //       rl.stdoutMuted = true;
+    //       rl.history = rl.history.slice(1);
+    // });
+    
+    // rl._writeToOutput = function _writeToOutput(stringToWrite) {
+    //   if (rl.stdoutMuted)
+    //     rl.output.write("*");
+    //   else
+    //     rl.output.write(stringToWrite);
+    // };
 }
 
 function runBoid(){
@@ -201,6 +217,8 @@ function readGlobalPrefsOverride(){
 }
 
 function setupBoinc(){
+    console.log('sudo apt install boinc-client')
+    console.log('need sudo pw to proceed')
     cmd.get(
         `
             sudo apt install boinc-client
