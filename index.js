@@ -207,11 +207,9 @@ function readGlobalPrefsOverride(){
 }
 
 function setupBoinc(){
-    console.log('sudo apt install boinc-client')
-    console.log('need sudo pw to proceed')
     cmd.get(
         `
-            sudo apt install boinc-client
+            sudo apt install boinc-client -y
             boinccmd --project_attach http://www.worldcommunitygrid.org/ 1061556_a0c611b081f8692b7ef0c11d39e6105c
         `,
         function(err, data, stderr){
