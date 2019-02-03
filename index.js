@@ -76,6 +76,7 @@ var rl = readline.createInterface({
 
 async function setupBoid(){
     var form = {}
+    rl.stdoutMuted = false
     rl.question('Boid Account Email:', (email) => {
         form.email = email
         rl.question('Boid Account Password: ', (password) => {
@@ -83,36 +84,25 @@ async function setupBoid(){
             client.send(form,client.endPoint.authenticateUser,function(response){
                 response = JSON.parse(response)
                 if (response.invalid){
+                    console.log()
                     console.log(response.invalid)
-                    setupBoid()
+                    return setupBoid()
                 }
                 client.setUserData(response)
                 rl.close()
                 setupBoinc()
             })
         })
+        rl.stdoutMuted = true
+        // rl.history = rl.history.slice(1)
     })
     
-    // rl.question('Email: ', function(email) {
-    //     rl.question('Password: ', function(password) {
-    //         form.email = email
-    //         form.password = password
-    //         client.send(form,client.endPoint.authenticateUser,function(obj){
-    //             // client.setUserData(obj)
-    //             setupBoinc()
-    //         })
-    //         rl.close();
-    //       });
-    //       rl.stdoutMuted = true;
-    //       rl.history = rl.history.slice(1);
-    // });
-    
-    // rl._writeToOutput = function _writeToOutput(stringToWrite) {
-    //   if (rl.stdoutMuted)
-    //     rl.output.write("*");
-    //   else
-    //     rl.output.write(stringToWrite);
-    // };
+    rl._writeToOutput = function _writeToOutput(stringToWrite) {
+      if (rl.stdoutMuted)
+        rl.output.write("*")
+      else
+        rl.output.write(stringToWrite)
+    }
 }
 
 function runBoid(){
