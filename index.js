@@ -82,8 +82,7 @@ function setupBoid(){
             form.email = email
             form.password = password
             client.send(form,client.endPoint.authenticateUser,function(obj){
-                userData = JSON.parse(obj)
-                client.setUserData(userData)
+                client.setUserData(obj)
                 setupBoinc()
             })
             rl.close();
