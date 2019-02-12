@@ -1,12 +1,12 @@
-var cmd = require('node-cmd');
-var convert = require('xml-js');
-var fs = require('fs');
-var client = require("./api.js");
+var cmd = require('node-cmd')
+var convert = require('xml-js')
+var fs = require('fs')
+var client = require("./api.js")
 const minimist = require('minimist')
 const ora = require('ora')
 const spinner = ora()
-const readline = require('readline');
-const { spawn } = require('child_process');
+const readline = require('readline')
+const { spawn } = require('child_process')
 var form = {
     email: '',
     password: '',
@@ -219,7 +219,9 @@ function setupBoinc(){
                 setTimeout(readFiles,3000)
                
             } else {
+                // if (error.search(''))
                console.log('error', err)
+               setTimeout(readFiles,3000)
             }
         }
     );

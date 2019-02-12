@@ -32,7 +32,7 @@ $ boidcmd setup
 ```
 ##### Note: The setup phase runs: 
 sudo apt install boinc-client -y
-#####If you want to manually install boinc, you can run this line yourself before running setup.
+##### If you want to manually install boinc, you can run this line yourself before running setup.
 
 
 > additional commands can be found in the help menu
