@@ -17,6 +17,17 @@
 
 > A linux command line interface for Boid 
 
+### From a fresh Debian/Ubuntu install:
+```shell
+wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
+
+command -v nvm
+
+nvm install node
+```
+##### This CLI has only been tested on Debian based distributions.
+
+
 ### Setup
 
 > install this package first
