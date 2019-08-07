@@ -96,7 +96,7 @@ async function setupBoid(){
         rl.stdoutMuted = true
         // rl.history = rl.history.slice(1)
     })
-    
+
     rl._writeToOutput = function _writeToOutput(stringToWrite) {
       if (rl.stdoutMuted)
         rl.output.write("*")
@@ -110,7 +110,7 @@ function runBoid(){
         detached: true,
         stdio: 'ignore'
       });
-      
+
       subprocess.unref();
 }
 
@@ -129,6 +129,7 @@ function quitBoid(){
 }
 
 function installBoid() {
+
     cmd.get(
         `
             sudo apt install boinc-client -y
@@ -136,13 +137,13 @@ function installBoid() {
         `,
         function(err, data, stderr){
             if (!err) {
-                console.log("waiting for project information")
+                console.log("\nwaiting for project information")
                 spinner.start()
                 setTimeout(projectCheck,3000)
             } else {
                console.log('error', err)
             }
-    
+
         }
     );
 }
@@ -157,9 +158,17 @@ function projectCheck(){
         var cpid = hostInfo.host_cpid._text
         var threads = hostInfo.p_ncpus._text
         var model = hostInfo.p_model._text
+
+        if (project.length > 1){
+            console.error("ERROR: you have more than 1 project already configured, boidcmd requires you to only be attached to www.worldcommunitygrid.org")
+            process.exit(-1)
+        }
+
         var wcgid = project.hostid._text
+
         if(wcgid == "0"){
             setTimeout(projectCheck,3000)
+            console.log("Timeout while checking project status.")
         }else{
             spinner.stop()
             console.log("Success!")
@@ -198,7 +207,7 @@ function readGlobalPrefsOverride(){
         function(err, data, stderr){
             if (!err) {
                 console.log("Sucessfully set cpu limit")
-                spinner.stop()       
+                spinner.stop()
             } else {
                console.log('error', err)
             }
@@ -214,10 +223,10 @@ function setupBoinc(){
         `,
         function(err, data, stderr){
             if (!err) {
-                console.log("waiting for project information")
+                console.log("\nwaiting for project information")
                 spinner.start()
                 setTimeout(readFiles,3000)
-               
+
             } else {
                 // if (error.search(''))
                console.log('error', err)
@@ -230,7 +239,7 @@ function setupBoinc(){
 function resume() {
     cmd.get(
         `
-            boinccmd --project http://www.worldcommunitygrid.org/ resume 
+            boinccmd --project http://www.worldcommunitygrid.org/ resume
         `,
         function(err, data, stderr){
             if (!err) {
@@ -240,7 +249,7 @@ function resume() {
             } else {
                console.log('error', err)
             }
-    
+
         }
     );
 }
@@ -248,7 +257,7 @@ function resume() {
 function suspend() {
     cmd.get(
         `
-            boinccmd --project http://www.worldcommunitygrid.org/ suspend 
+            boinccmd --project http://www.worldcommunitygrid.org/ suspend
         `,
         function(err, data, stderr){
             if (!err) {
@@ -258,7 +267,7 @@ function suspend() {
             } else {
                console.log('error', err)
             }
-    
+
         }
     );
 }
@@ -266,7 +275,7 @@ function suspend() {
 function status() {
     cmd.get(
         `
-            boinccmd --get_simple_gui_info 
+            boinccmd --get_simple_gui_info
         `,
         function(err, data, stderr){
             if (!err) {
@@ -276,7 +285,7 @@ function status() {
             } else {
                console.log('error', err)
             }
-    
+
         }
     );
 }
@@ -286,16 +295,20 @@ function readFiles(callback) {
         var result1 = convert.xml2json(data, {compact: true, spaces: 4});
         var object = JSON.parse(result1);
         var hostInfo = object.client_state.host_info
-        var project = object.client_state.project
         var name = hostInfo.domain_name._text
         var cpid = hostInfo.host_cpid._text
         var threads = hostInfo.p_ncpus._text
         var model = hostInfo.p_model._text
+        var project = object.client_state.project
+
+        if (project.length > 1){
+            console.error("ERROR: you have more than 1 project already configured, boidcmd requires you to only be attached to www.worldcommunitygrid.org")
+            process.exit(-1)
+        }
         var wcgid = project.hostid._text
+
         if(wcgid == "0"){
-            
             setTimeout(readFiles,3000)
-            
         }else{
             spinner.stop()
             projectObject.wcgid = wcgid
@@ -312,10 +325,10 @@ function readFiles(callback) {
                     console.log("error adding Device")
                 }else{
                     console.log("Added device to boid account")
-                    console.log(json)
                     var deviceId = json.id
                     client.send({"id":deviceId},client.endPoint.getDevice,function(obj){
                         var json = JSON.parse(obj)
+                        console.log(json)
                         projectObject.deviceId = json.id
                         client.send(projectObject,client.endPoint.updateDevice,function(obj){
                             var json = JSON.parse(obj)
@@ -328,12 +341,13 @@ function readFiles(callback) {
                                     var json = JSON.parse(obj)
                                     if(json.wcgid != null){
                                         if(projectObject.wcgid == json.wcgid){
-                                            console.log("Success!")
+                                            console.log("Project setup Success!")
                                         }else {
-                                            console(" Device is using a difference wcgid wcgid:"+json.wcgid)
+                                            console(" Device is using a different wcgid wcgid:"+json.wcgid)
                                         }
                                     }else{
-                                        //some other issue caused a problem
+                                        //some other issue caused a problemi
+                                        console("wcgid is null, this should not happen.")
                                     }
                                     console.log('Setup complete. Run "boidcmd status" to view project status')
                                     process.exit(0);
@@ -357,10 +371,9 @@ function readFiles(callback) {
 /*function makeid() {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  
+
     for (var i = 0; i < 7; i++)
       text += possible.charAt(Math.floor(Math.random() * possible.length));
-  
+
     return text;
   }*/
-  
