@@ -117,7 +117,7 @@ function runBoid(){
 function quitBoid(){
     cmd.get(
         `
-            boinccmd kill
+            boinccmd --quit
         `,
         function(err, data, stderr){
             if (!err) {
