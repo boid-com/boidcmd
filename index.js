@@ -212,6 +212,9 @@ function readGlobalPrefsOverride(){
             if (!err) {
                 console.log("Sucessfully set cpu limit")
                 spinner.stop()
+                console.log(data)
+                console.log(stderr)
+                process.exit(0);
             } else {
                console.log('error', err)
             }
