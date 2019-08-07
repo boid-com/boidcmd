@@ -159,6 +159,10 @@ function projectCheck(){
         var threads = hostInfo.p_ncpus._text
         var model = hostInfo.p_model._text
 
+        if (project == undefined){
+           console.error("ERROR: you have no project attached, the boinc daemon is likely not installed or running.")
+           process.exit(-1)
+        }
         if (project.length > 1){
             console.error("ERROR: you have more than 1 project already configured, boidcmd requires you to only be attached to www.worldcommunitygrid.org")
             process.exit(-1)
@@ -301,6 +305,11 @@ function readFiles(callback) {
         var model = hostInfo.p_model._text
         var project = object.client_state.project
 
+        if (project == undefined){
+            console.error("ERROR: you have no project attached, the boinc daemon is likely not installed or running.")
+            process.exit(-1)
+        }
+
         if (project.length > 1){
             console.error("ERROR: you have more than 1 project already configured, boidcmd requires you to only be attached to www.worldcommunitygrid.org")
             process.exit(-1)
@@ -343,11 +352,10 @@ function readFiles(callback) {
                                         if(projectObject.wcgid == json.wcgid){
                                             console.log("Project setup Success!")
                                         }else {
-                                            console(" Device is using a different wcgid wcgid:"+json.wcgid)
+                                            console.log(" Device is using a different wcgid wcgid:"+json.wcgid)
                                         }
                                     }else{
-                                        //some other issue caused a problemi
-                                        console("wcgid is null, this should not happen.")
+                                        //some other issue caused a problem
                                     }
                                     console.log('Setup complete. Run "boidcmd status" to view project status')
                                     process.exit(0);
