@@ -35,6 +35,7 @@ nvm install node
 ```shell
 $ npm install boidcmd -g
 ```
+> Please make sure you have "sudo" installed before running boidcmd.
 
 > now setup boid 
 
@@ -43,8 +44,13 @@ $ boidcmd setup
 ```
 ##### Note: The setup phase runs: 
 sudo apt install boinc-client -y
-##### If you want to manually install boinc, you can run this line yourself before running setup.
 
+##### Procedure to install boinc manually:
+
+```shell
+$ sudo apt install boinc-client -y
+$ boinccmd --dir /var/lib/boinc-client --daemon --allow_remote_gui_rpc
+```
 
 > additional commands can be found in the help menu
 
