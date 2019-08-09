@@ -25,7 +25,7 @@ command -v nvm
 
 nvm install node
 ```
-##### This CLI has only been tested on Debian based distributions.
+##### This CLI has only been tested on Debian and Ubuntu based distributions.
 
 
 ### Setup
@@ -35,21 +35,28 @@ nvm install node
 ```shell
 $ npm install boidcmd -g
 ```
-> Please make sure you have "sudo" installed before running boidcmd.
 
-> now setup boid 
+##### REQUIRED: you must first install boinc-client package. 
+sudo apt install boinc-client -y
+
+Make sure to check that it is running, this can be done with the command:
+```shell
+$ boinccmd --get_state
+```
+if you get an authentication error code -155 , you will have to blank out the password
+in the file /etc/boinc-client/gui_rpc_auth.cfg ( the file just needs to be empty)
+and restart the boinc-client service.
+
+```shell
+$ service boinc-client restart
+or
+$ systemctl restart boinc-client
+```
+
+> now setup boid by typing the following command:
 
 ```shell
 $ boidcmd setup
-```
-##### Note: The setup phase runs: 
-sudo apt install boinc-client -y
-
-##### Procedure to install boinc manually:
-
-```shell
-$ sudo apt install boinc-client -y
-$ boinccmd --dir /var/lib/boinc-client --daemon --allow_remote_gui_rpc
 ```
 
 > additional commands can be found in the help menu
