@@ -67,6 +67,7 @@ module.exports = () => {
         break
         default:
         console.error(`"${boidcmd}" is not a valid command!`)
+        process.exit(1)
         break
     }
 }
