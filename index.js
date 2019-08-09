@@ -213,11 +213,9 @@ async function setCPU(value){
     await verifyBoinc()
 
     fs.readFile( '/var/lib/boinc-client/global_prefs_override.xml', function(err, data) {
-        var cpuPercent = valBetween(value * 1 + 15, 70, 100)
-        console.log(cpuPercent)
         var result1 = convert.xml2json(data, {compact: true, spaces: 4});
         var object = JSON.parse(result1);
-        object.global_preferences.cpu_usage_limit = cpuPercent
+        object.global_preferences.cpu_usage_limit = valBetween(value,0,100)
         var options = {compact:true, ignoreComment:true, spaces:4};
         var xmlResult = convert.json2xml(object,options);
         console.log(object)
