@@ -132,7 +132,6 @@ function installBoid() {
 
     cmd.get(
         `
-            sudo apt install boinc-client -y
             boinccmd --project_attach http://www.worldcommunitygrid.org/ 1061556_a0c611b081f8692b7ef0c11d39e6105c
         `,
         function(err, data, stderr){
@@ -225,7 +224,6 @@ function readGlobalPrefsOverride(){
 function setupBoinc(){
     cmd.get(
         `
-            sudo apt install boinc-client -y
             boinccmd --project_attach http://www.worldcommunitygrid.org/ 1061556_a0c611b081f8692b7ef0c11d39e6105c
         `,
         function(err, data, stderr){
