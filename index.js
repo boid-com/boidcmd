@@ -114,19 +114,19 @@ function runBoid(){
       subprocess.unref();
 }
 
+
 function quitBoid(){
-    cmd.get(
-        `
-            boinccmd --quit
-        `,
-        function(err, data, stderr){
-            if (!err) {
-            } else {
-               console.log('error', err)
-            }
-        }
-    );
+    const subprocess = spawn('boinccmd',['--quit'], {
+        detached: true,
+        stdio: 'ignore'
+      });
+
+    subprocess.unref();
+
+    console.log("boinc stopped..")
+    process.exit(0)
 }
+
 
 function installBoid() {
 
