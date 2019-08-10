@@ -7,6 +7,8 @@ const ora = require('ora')
 const spinner = ora()
 const readline = require('readline')
 const { spawn } = require('child_process')
+const exec = require('child_process').exec
+
 var form = {
     email: '',
     password: '',
@@ -55,7 +57,7 @@ module.exports = () => {
         suspend()
         break
         case 'status':
-        status()
+        statusBoid()
         break
         case 'help':
         require('./help')
@@ -65,6 +67,7 @@ module.exports = () => {
         break
         default:
         console.error(`"${boidcmd}" is not a valid command!`)
+        process.exit(1)
         break
     }
 }
@@ -74,7 +77,28 @@ var rl = readline.createInterface({
   output: process.stdout
 });
 
+function isProcessRunning(processName){
+    const cmd = `ps -A`
+    return new Promise(function(resolve,reject){
+       exec(cmd, function(err,stdout,stderr) {
+          //console.log(stdout.indexOf('boinc'))
+	  resolve(stdout.toLowerCase().indexOf(processName.toLowerCase()) > -1)
+       })
+    })
+}
+
+async function verifyBoinc(){
+    let status = await isProcessRunning('boinc')   
+    if(!status){
+          console.log("boinc process is not running, please run systemctl start boinc-client")
+          process.exit(-1)           
+    } 
+}
+ 
 async function setupBoid(){
+ 
+    await verifyBoinc()
+  
     var form = {}
     rl.stdoutMuted = false
     rl.question('Boid Account Email:', (email) => {
@@ -105,6 +129,8 @@ async function setupBoid(){
     }
 }
 
+
+
 function runBoid(){
     const subprocess = spawn('boinc',['--dir', '/var/lib/boinc-client/', '--daemon', '--allow_remote_gui_rpc'], {
         detached: true,
@@ -115,24 +141,23 @@ function runBoid(){
 }
 
 function quitBoid(){
-    cmd.get(
-        `
-            boinccmd --quit
-        `,
-        function(err, data, stderr){
-            if (!err) {
-            } else {
-               console.log('error', err)
-            }
-        }
-    );
+    const subprocess = spawn('boinccmd',['--quit'], {
+        detached: true,
+        stdio: 'ignore'
+      });
+
+    subprocess.unref();
+
+    console.log("boinc stopped..")
+    process.exit(0)
 }
 
-function installBoid() {
+async function installBoid() {
+
+    await verifyBoinc()
 
     cmd.get(
         `
-            sudo apt install boinc-client -y
             boinccmd --project_attach http://www.worldcommunitygrid.org/ 1061556_a0c611b081f8692b7ef0c11d39e6105c
         `,
         function(err, data, stderr){
@@ -184,13 +209,14 @@ function valBetween(v, min, max) {
     return Math.min(max, Math.max(min, v))
 }
 
-function setCPU(value){
+async function setCPU(value){
+
+    await verifyBoinc()
+
     fs.readFile( '/var/lib/boinc-client/global_prefs_override.xml', function(err, data) {
-        var cpuPercent = valBetween(value * 1 + 15, 70, 100)
-        console.log(cpuPercent)
         var result1 = convert.xml2json(data, {compact: true, spaces: 4});
         var object = JSON.parse(result1);
-        object.global_preferences.cpu_usage_limit = cpuPercent
+        object.global_preferences.cpu_usage_limit = valBetween(value,0,100)
         var options = {compact:true, ignoreComment:true, spaces:4};
         var xmlResult = convert.json2xml(object,options);
         console.log(object)
@@ -202,7 +228,17 @@ function setCPU(value){
      });
 }
 
-function readGlobalPrefsOverride(){
+async function readGlobalPrefsOverride(){
+
+    await verifyBoinc()
+
+    isProcessRunning("boinc", (status) => {
+                if(!status){
+                   console.log("boinc process is not running, please run systemctl start boinc-client")
+                   process.exit(-1)
+                }
+    })
+
     spinner.start()
     cmd.get(
         `
@@ -222,10 +258,12 @@ function readGlobalPrefsOverride(){
     );
 }
 
-function setupBoinc(){
+async function setupBoinc(){
+
+    await verifyBoinc()
+
     cmd.get(
         `
-            sudo apt install boinc-client -y
             boinccmd --project_attach http://www.worldcommunitygrid.org/ 1061556_a0c611b081f8692b7ef0c11d39e6105c
         `,
         function(err, data, stderr){
@@ -243,7 +281,10 @@ function setupBoinc(){
     );
 }
 
-function resume() {
+async function resume() {
+
+    await verifyBoinc()
+
     cmd.get(
         `
             boinccmd --project http://www.worldcommunitygrid.org/ resume
@@ -261,7 +302,10 @@ function resume() {
     );
 }
 
-function suspend() {
+async function suspend() {
+
+    await verifyBoinc()
+
     cmd.get(
         `
             boinccmd --project http://www.worldcommunitygrid.org/ suspend
@@ -279,7 +323,19 @@ function suspend() {
     );
 }
 
-function status() {
+async function statusBoid() {
+
+    await verifyBoinc() 
+
+    var pass = "n/a"
+    fs.readFile('/var/lib/boinc-client/gui_rpc_auth.cfg', function(err, data) { 
+      console.log(data)
+      pass = data 
+      console.log(err)
+    })
+
+    console.log(pass)
+
     cmd.get(
         `
             boinccmd --get_simple_gui_info
@@ -374,17 +430,4 @@ function readFiles(callback) {
 
 // sudo aptitude install boinc-client
 // sudo aptitude purge boinc-client
-//
-//
 
-//fake cpid
-
-/*function makeid() {
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-    for (var i = 0; i < 7; i++)
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-    return text;
-  }*/
