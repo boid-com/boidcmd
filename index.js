@@ -131,7 +131,7 @@ async function setupBoid(){
     }
 }
 
-async function checkDevices(){
+async function checkDevices(value){
 
     var form = {}
     rl.stdoutMuted = false
@@ -144,19 +144,24 @@ async function checkDevices(){
                 if (response.invalid){
                     console.log()
                     console.log(response.invalid)
-                    return checkDevices()
+                    return checkDevices(value)
                 }
                 client.setUserData(response)
                 rl.close()
                 client.send({"id":response.id},client.endPoint.getUser,function(obj){
                     //console.log(obj)
                     var json = JSON.parse(obj)
-                    console.log("\nUsername:        ", json.username )
-                    console.log("User Boid Power: ", json.dPower)
-                    console.log("Registered devices (CSV format):")
-                    console.log("ID,STATUS,TYPE,POWER,PENDING,NAME")
-                    for(count in json.devices){
-                        console.log(json.devices[count].id+","+json.devices[count].status+","+json.devices[count].type+","+json.devices[count].power+","+json.devices[count].pending+","+json.devices[count].name)
+                    if(value == "csv"){
+                      console.log("\nUsername:        ", json.username )
+                      console.log("User Boid Power: ", json.dPower)
+                      console.log("Registered devices (CSV format):")
+                      console.log("ID,STATUS,TYPE,POWER,PENDING,NAME")
+                      for(count in json.devices){
+                          console.log(json.devices[count].id+","+json.devices[count].status+","+json.devices[count].type+","+json.devices[count].power+","+json.devices[count].pending+","+json.devices[count].name)
+                      }
+                    }
+                    else {
+                       console.log(json)
                     }
                 })
             })

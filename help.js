@@ -14,7 +14,7 @@ const menus = {
     resume ............. resumes all work for currrent project
     suspend ............ suspends all work for current project
     status ............. shows status for all tasks
-    devices ............ shows your registered devices
+    devices <option> ... shows your registered devices, option is csv , default is JSON format
     version ............ show package version
     help ............... show help menu for a command
     
