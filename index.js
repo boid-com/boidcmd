@@ -41,6 +41,9 @@ module.exports = () => {
         case 'devices':
         checkDevices()
         break
+        case 'workunits':
+        getWorkUnits()
+        break
         case 'setup':
         setupBoid()
         break
@@ -177,6 +180,44 @@ async function checkDevices(value){
         rl.output.write(stringToWrite)
     }
 }
+
+async function getWorkUnits(){
+
+    var form = {}
+    rl.stdoutMuted = false
+    rl.question('Boid Account Email:', (email) => {
+        form.email = email
+        rl.question('Boid Account Password: ', (password) => {
+            form.password = password
+            client.send(form,client.endPoint.authenticateUser,function(response){
+                response = JSON.parse(response)
+                if (response.invalid){
+                    console.log()
+                    console.log(response.invalid)
+                    return getWorkUnits()
+                }
+                client.setUserData(response)
+                rl.close()
+                client.send({"id":response.id},client.endPoint.getWorkUnits,function(obj){
+                       //console.log(obj)
+                       var json = JSON.parse(obj)
+                       console.log(json)
+
+                })
+            })
+        })
+        rl.stdoutMuted = true
+        // rl.history = rl.history.slice(1)
+    })
+
+    rl._writeToOutput = function _writeToOutput(stringToWrite) {
+      if (rl.stdoutMuted)
+        rl.output.write("*")
+      else
+        rl.output.write(stringToWrite)
+    }
+}
+
 
 function runBoid(){
     const subprocess = spawn('boinc',['--dir', '/var/lib/boinc-client/', '--daemon', '--allow_remote_gui_rpc'], {
