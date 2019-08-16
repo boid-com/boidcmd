@@ -198,7 +198,7 @@ async function getWorkUnits(){
                 }
                 client.setUserData(response)
                 rl.close()
-                client.send({"id":response.id},client.endPoint.getWorkUnits,function(obj){
+                client.send({"id":response.id, "valid": true},client.endPoint.getWorkUnits,function(obj){
                        //console.log(obj)
                        var json = JSON.parse(obj)
                        console.log(json)
