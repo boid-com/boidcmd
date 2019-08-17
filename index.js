@@ -198,11 +198,30 @@ async function getWorkUnits(){
                 }
                 client.setUserData(response)
                 rl.close()
-                client.send({"id":response.id, "valid": true},client.endPoint.getWorkUnits,function(obj){
+
+                // Find out the local hostId (world grid community host id)
+                fs.readFile( '/var/lib/boinc-client/client_state.xml', function(err, data) {
+                    var result1 = convert.xml2json(data, {compact: true, spaces: 4});
+                    var object = JSON.parse(result1);
+                    var project = object.client_state.project
+                    if (project == undefined){
+                      console.error("ERROR: you have no project attached, the boinc daemon is likely not installed or running.")
+                      process.exit(-1)
+                    }
+                    if (project.length > 1){
+                      console.error("ERROR: you have more than 1 project already configured, boidcmd requires you to only be attached to www.worldcommunitygrid.org")
+                      process.exit(-1)
+                    }
+                    var wcgid = project.hostid._text
+                    console.log("\nquerying boid for workunits for hostid: "+wcgid)
+                    client.send({"wcgid": wcgid, "valid": true},client.endPoint.getWorkUnits,function(obj){
                        //console.log(obj)
                        var json = JSON.parse(obj)
-                       console.log(json)
-
+                       if (json.length > 0){
+                         console.log(json)
+                       }
+                       else console.log("this device has not submitted any workunits recently.")
+                    })
                 })
             })
         })
