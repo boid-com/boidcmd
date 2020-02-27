@@ -15,6 +15,7 @@ const menus = {
     suspend ............ suspends all work for current project
     status ............. shows status for all tasks
     devices <option> ... shows your registered devices, option is csv , default is JSON format
+    workunits .......... shows last 100 workunits
     version ............ show package version
     help ............... show help menu for a command
     
