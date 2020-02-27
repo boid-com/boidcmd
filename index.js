@@ -39,7 +39,7 @@ module.exports = () => {
         setCPU(value)
         break
         case 'devices':
-        checkDevices()
+        checkDevices(value)
         break
         case 'workunits':
         getWorkUnits()
