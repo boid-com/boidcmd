@@ -154,6 +154,7 @@ exports.endPoint = {
     checkUsername:"/checkUsername",
     getUser:"/getUser",
     getDevice:"/getDevice",
+    getWorkUnits:"/getWorkUnits",
     globalLeaderboard:"/globalLeaderboard",
     teamsLeaderboard:"/teamsLeaderboard",
     teamLeaderboard:"/teamLeaderboard",
