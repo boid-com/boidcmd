@@ -20,7 +20,7 @@
 ### From a fresh Debian/Ubuntu install:
 ```shell
 wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
-
+logout and log back in to the shell.
 command -v nvm
 
 nvm install node
