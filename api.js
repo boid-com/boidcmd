@@ -108,7 +108,7 @@ exports.send = function(obj,endPoint,callback) {
     }else{
         options = {
             'method': 'POST',
-            'hostname': 'api.boid.com',
+            'hostname': 'api.boid.io',
             'path': endPoint,
             'headers': {
                 'Content-Type': 'application/json',
